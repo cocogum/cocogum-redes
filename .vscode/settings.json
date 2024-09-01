@@ -1,0 +1,22 @@
+{
+  "cSpell.words": [
+    "autoflush",
+    "Crear",
+    "datos",
+    "Dependencia",
+    "desde",
+    "fastapi",
+    "Importar",
+    "intermedia",
+    "muchos",
+    "obtener",
+    "passlib",
+    "pydantic",
+    "relación",
+    "sesión",
+    "sessionmaker",
+    "sqlalchemy",
+    "sqlmodel",
+    "todas"
+  ]
+}
