@@ -1,14 +1,25 @@
-from sqlmodel import SQLModel, create_engine, Session
-from .config import settings
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
+from sqlalchemy.orm import sessionmaker
+
+from app.config import settings  # Importar la configuración
+from app.models import Base  # Importar Base desde __init__.py
+
+DATABASE_URL = settings.DATABASE_URL
 
 # Crear el motor de la base de datos
-engine = create_engine(settings.database_url)
+engine = create_async_engine(DATABASE_URL, echo=True)
 
-# Crear todas las tablas
-def create_db_and_tables():
-    SQLModel.metadata.create_all(engine)
+# Crear la sesión local
+SessionLocal = sessionmaker(
+    autocommit=False, autoflush=False, bind=engine, class_=AsyncSession
+)
 
-# Dependencia para obtener la sesión de la base de datos
-def get_db():
-    with Session(engine) as session:
+
+async def get_db():
+    async with SessionLocal() as session:
         yield session
+
+
+async def create_db_and_tables():
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)

@@ -1,28 +1,17 @@
-from typing import List, Optional
-from sqlmodel import Field, SQLModel, Relationship
-from sqlalchemy import Column, String, ForeignKey, Table
-from sqlalchemy.orm import relationship
+from sqlalchemy import Column, Integer, String
+from sqlalchemy.dialects.postgresql import TIMESTAMP
 
-# Tabla intermedia para la relación muchos a muchos
-user_roles_table = Table(
-    "user_roles",
-    SQLModel.metadata,
-    Column("user_id", ForeignKey("users.id"), primary_key=True),
-    Column("role_id", ForeignKey("roles.id"), primary_key=True)
-)
+from .base import Base
 
-class Role(SQLModel, table=True):
-    id: Optional[int] = Field(default=None, primary_key=True)
-    name: str = Field(sa_column=Column("name", String, unique=True, nullable=False))
 
-class User(SQLModel, table=True):
-    id: Optional[int] = Field(default=None, primary_key=True)
-    first_name: str = Field(sa_column=Column("first_name", String(120), nullable=False))
-    last_name: str = Field(sa_column=Column("last_name", String(255), nullable=False))
-    username: str = Field(sa_column=Column("username", String(50), unique=True))
-    email: str = Field(sa_column=Column("email", String(100), unique=True))
-    phone: str = Field(sa_column=Column("phone", String(20), unique=True))
-    password: str
-    roles: List["Role"] = Relationship(back_populates="users", link_model=user_roles_table)
-
-Role.users = Relationship(back_populates="roles", link_model=user_roles_table)
+class User(Base):
+    __tablename__ = 'users'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    username = Column(String, nullable=False)
+    email = Column(String, nullable=False)
+    password = Column(String, nullable=False)
+    phone = Column(String, nullable=True)
+    created_at = Column(TIMESTAMP, nullable=False)
+    updated_at = Column(TIMESTAMP, nullable=False)
+    first_name = Column(String(length=120), nullable=False)
+    last_name = Column(String(length=255), nullable=False)
