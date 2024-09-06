@@ -1,16 +1,23 @@
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 
-from app.auth import router as auth_router
-from app.crud.role_routes import router as role_router
-from app.crud.user_routes import router as user_router
 from app.database import create_db_and_tables
+from app.routers.auth import auth_router
+from app.routers.role import role_router
+from app.routers.user import user_router
 
-app = FastAPI()
 
-
-@app.on_event('startup')
-async def on_startup():
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Código de inicio
     await create_db_and_tables()
+    yield
+    # Código de cierre
+    # Código de limpieza
+
+
+app = FastAPI(lifespan=lifespan)
 
 
 # Ruta para la raíz
@@ -19,10 +26,10 @@ async def read_root():
     return {'message': 'Hello World'}
 
 
-# Ruta para items
-@app.get('/items/')
-async def read_items():
-    return [{'item_id': 1, 'name': 'Item 1'}, {'item_id': 2, 'name': 'Item 2'}]
+# Añadir el endpoint /some-endpoint
+@app.get('/some-endpoint')
+async def some_endpoint():
+    return {'message': 'success'}
 
 
 app.include_router(user_router, prefix='/api/v1', tags=['users'])

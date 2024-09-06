@@ -1,17 +1,31 @@
-from sqlalchemy import Column, Integer, String
-from sqlalchemy.dialects.postgresql import TIMESTAMP
+import pytz
+from sqlalchemy import Column, DateTime, Integer, String, func
+from sqlalchemy.orm import declarative_base
 
-from .base import Base
+Base = declarative_base()
+
+# Definir la zona horaria
+TIME_ZONE = pytz.utc
 
 
 class User(Base):
     __tablename__ = 'users'
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    username = Column(String, nullable=False)
-    email = Column(String, nullable=False)
-    password = Column(String, nullable=False)
+
+    id = Column(Integer, primary_key=True, index=True)
+    email = Column(String, unique=True, index=True, nullable=False)
+    username = Column(String(60), unique=True, index=True, nullable=False)
+    first_name = Column(String(80), nullable=False)
+    last_name = Column(String(120), nullable=False)
     phone = Column(String, nullable=True)
-    created_at = Column(TIMESTAMP, nullable=False)
-    updated_at = Column(TIMESTAMP, nullable=False)
-    first_name = Column(String(length=120), nullable=False)
-    last_name = Column(String(length=255), nullable=False)
+    hashed_password = Column(String, nullable=False)
+    created_at = Column(
+        DateTime(timezone=True),
+        server_default=func.now(TIME_ZONE),
+        nullable=False,
+    )
+    updated_at = Column(
+        DateTime(timezone=True),
+        server_default=func.now(TIME_ZONE),
+        onupdate=func.now(TIME_ZONE),
+        nullable=False,
+    )

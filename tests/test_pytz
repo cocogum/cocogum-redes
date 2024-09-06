@@ -1,0 +1,8 @@
+# test_pytz.py
+import pytz
+from datetime import datetime
+
+time_zone = pytz.timezone('America/New_York')
+current_time = datetime.now(time_zone)
+
+print(f"La hora actual en Nueva York es: {current_time}")

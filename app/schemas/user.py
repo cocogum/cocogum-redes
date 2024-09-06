@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, ConfigDict, EmailStr, Field
 
 
 class UserBase(BaseModel):
@@ -9,7 +9,8 @@ class UserBase(BaseModel):
 
 
 class UserCreate(UserBase):
-    password: str = Field(..., min_length=8)
+    username: str = Field(None, min_length=4, max_length=60)
+    password: str = Field(..., min_length=8)  # Cambiado a 'password'
 
 
 class UserUpdate(BaseModel):
@@ -17,15 +18,22 @@ class UserUpdate(BaseModel):
     first_name: str = Field(None, min_length=1, max_length=120)
     last_name: str = Field(None, min_length=1, max_length=255)
     phone: str = Field(None, pattern=r'^\+?1?\d{9,15}$')  # Validación teléfono
-    password: str = Field(None, min_length=8)
+    password: str = Field(None, min_length=8)  # Cambiado a 'password'
 
 
 class UserDelete(BaseModel):
     id: int
 
 
+class MyModel(BaseModel):
+    id: int
+    name: str
+
+    model_config = ConfigDict(from_attributes=True)
+
+
 class User(UserBase):
     id: int
+    name: str
 
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)

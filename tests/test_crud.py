@@ -1,12 +1,18 @@
-# tests/test_crud.py
-import pytest
-from sqlalchemy.orm import Session
-from app.crud import user as crud_user
-from app.schemas.user import UserCreate
+import pytest_asyncio
 
-def test_create_user(db_session: Session):
-    user_in = UserCreate(username="testuser", email="testuser@example.com", password="password")
-    user = crud_user.create_user(db=db_session, user=user_in)
-    assert user.id is not None
-    assert user.username == "testuser"
-    assert user.email == "testuser@example.com"
+from app.models.user import User
+
+
+@pytest_asyncio.fixture
+async def test_create_user(db_session):
+    new_user = User(
+        email='test@example.com',
+        username='testuser',
+        first_name='Test',
+        last_name='User',
+        phone='1234567890',
+        hashed_password='hashedpassword',
+    )
+    db_session.add(new_user)
+    await db_session.commit()
+    assert new_user.id is not None

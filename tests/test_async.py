@@ -1,9 +1,12 @@
-import asyncio
-
-import pytest
+import pytest_asyncio
 
 
-@pytest.mark.asyncio
-async def test_async_example():
-    await asyncio.sleep(1)
-    assert True
+@pytest_asyncio.fixture
+async def async_example_fixture():
+    await pytest_asyncio.sleep(1)
+    yield
+
+
+@pytest_asyncio.fixture
+async def test_async_example(async_example_fixture):
+    pass

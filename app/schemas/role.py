@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class RoleBase(BaseModel):
@@ -20,5 +20,4 @@ class RoleDelete(BaseModel):
 class Role(RoleBase):
     id: int
 
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
